@@ -9,8 +9,27 @@ A document scanner + PDF generator plugin for flutter
 #### Installing
 
 ```yaml
-document_scanner_flutter: ^0.2.3
+document_scanner_flutter:
+  git:
+    url: https://github.com/MyCareRecords/document_scanner_flutter
+    ref: master
 ```
+
+And add ```pod 'WeScan', :path => '.symlinks/plugins/document_scanner_flutter/ios/WeScan-3.0.0'``` in your Podfile.
+Your Podfile will look like this now -
+```
+target 'Runner' do
+  use_frameworks!
+  use_modular_headers!
+  pod 'WeScan', :path => '.symlinks/plugins/document_scanner_flutter/ios/WeScan-3.0.0'
+  flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+end
+```
+
+
+
+Finally, run ```flutter clean && flutter pub get``` 
+Then navigate to the ios folder run ```rm Podfile.lock && rm -rf .symlinks Pods && pod install --repo-update```
 
 #### Basic Usage
 
