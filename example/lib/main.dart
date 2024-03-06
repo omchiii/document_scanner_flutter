@@ -1,9 +1,9 @@
 import 'dart:io';
 
+import 'package:advance_pdf_viewer2/advance_pdf_viewer.dart';
 import 'package:document_scanner_flutter/document_scanner_flutter.dart';
 import 'package:document_scanner_flutter/configs/configs.dart';
 import 'package:flutter/material.dart';
-import 'package:advance_pdf_viewer/advance_pdf_viewer.dart';
 
 void main() {
   runApp(MyApp());

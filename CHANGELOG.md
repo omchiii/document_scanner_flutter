@@ -39,3 +39,7 @@
 ## 0.2.5
 
 * Safe area UI fixes
+
+## 1.0.0
+
+* Added WeScan 3.0.0 Library - as 1.7.0 was giving some issues
