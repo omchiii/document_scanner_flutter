@@ -62,7 +62,7 @@ class DocumentScannerFlutter {
     }
     return showModalBottomSheet<File>(
         context: context,
-        isDismissible: false,
+        isDismissible: true,
         builder: (BuildContext bc) {
           return SafeArea(
               child: Container(
