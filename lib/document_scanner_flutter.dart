@@ -64,7 +64,8 @@ class DocumentScannerFlutter {
         context: context,
         isDismissible: false,
         builder: (BuildContext bc) {
-          return Container(
+          return SafeArea(
+              child: Container(
             child: new Wrap(
               children: <Widget>[
                 new ListTile(
@@ -92,7 +93,7 @@ class DocumentScannerFlutter {
                 ),
               ],
             ),
-          );
+          ));
         });
   }
 }
