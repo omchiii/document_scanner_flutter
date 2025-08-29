@@ -23,6 +23,8 @@ import com.scanlibrary.ScanActivity
 import com.scanlibrary.ScanConstants
 import java.io.File
 import java.io.IOException
+import android.view.View
+import android.view.ViewGroup
 
 /** DocumentScannerFlutterPlugin */
 class DocumentScannerFlutterPlugin :
@@ -138,25 +140,28 @@ class DocumentScannerFlutterPlugin :
 }
 
 /**
- * A tiny wrapper around ScanLibrary's ScanActivity that enables edge-to-edge
- * and applies WindowInsets padding so the toolbar and bottom controls are visible.
- * No themes or resources required.
+ * Wrapper around ScanLibrary's ScanActivity that:
+ *  - Enables edge-to-edge
+ *  - Applies WindowInsets padding so toolbar/bottom controls are visible
+ * No theme/resources required.
  */
 class EdgeToEdgeScanActivity : ScanActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
-    // Edge-to-edge (Android 15 auto-enables for targetSdk 35; this covers earlier versions too)
+    // Enable edge-to-edge (Android 14/15 default for high targetSdks; this covers earlier versions too)
     WindowCompat.setDecorFitsSystemWindows(window, false)
     super.onCreate(savedInstanceState)
 
-    // Apply insets as padding to the root content to keep toolbar/status/nav bars in harmony
-    val root = window?.decorView?.findViewById(android.R.id.content) ?: return
-    ViewCompat.setOnApplyWindowInsetsListener(root) { v, insets ->
+    // Root content view of this activity
+    val root: View = findViewById(android.R.id.content) ?: return
+
+    // If the ScanActivity adds its own child, pad that; otherwise pad the content itself
+    val padTarget: View = (root as? ViewGroup)?.getChildAt(0) ?: root
+
+    ViewCompat.setOnApplyWindowInsetsListener(padTarget) { v, insets ->
       val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-      (v as? android.view.ViewGroup)?.getChildAt(0)?.updatePadding(
-        top = bars.top,
-        bottom = bars.bottom
-      ) ?: v.updatePadding(top = bars.top, bottom = bars.bottom)
-      WindowInsetsCompat.CONSUMED
+      v.updatePadding(top = bars.top, bottom = bars.bottom)
+      // Don't forcibly consume; let child views participate if they want.
+      insets
     }
   }
 }
