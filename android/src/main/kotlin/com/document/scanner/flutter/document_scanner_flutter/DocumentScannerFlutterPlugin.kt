@@ -6,6 +6,8 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.view.ViewGroup
 import androidx.annotation.NonNull
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
@@ -23,8 +25,6 @@ import com.scanlibrary.ScanActivity
 import com.scanlibrary.ScanConstants
 import java.io.File
 import java.io.IOException
-import android.view.View
-import android.view.ViewGroup
 
 /** DocumentScannerFlutterPlugin */
 class DocumentScannerFlutterPlugin :
@@ -140,28 +140,31 @@ class DocumentScannerFlutterPlugin :
 }
 
 /**
- * Wrapper around ScanLibrary's ScanActivity that:
- *  - Enables edge-to-edge
- *  - Applies WindowInsets padding so toolbar/bottom controls are visible
- * No theme/resources required.
+ * Edge-to-edge wrapper around ScanLibrary's ScanActivity:
+ *  - Disables decor fitting
+ *  - Applies system bar insets as padding to the actual content view
  */
 class EdgeToEdgeScanActivity : ScanActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
-    // Enable edge-to-edge (Android 14/15 default for high targetSdks; this covers earlier versions too)
+    // Enable edge-to-edge across versions
     WindowCompat.setDecorFitsSystemWindows(window, false)
     super.onCreate(savedInstanceState)
 
-    // Root content view of this activity
-    val root: View = findViewById(android.R.id.content) ?: return
+    // Get the content root explicitly as a ViewGroup to avoid generic inference issues
+    val contentRoot: ViewGroup? =
+      window?.decorView?.findViewById<ViewGroup>(android.R.id.content)
 
-    // If the ScanActivity adds its own child, pad that; otherwise pad the content itself
-    val padTarget: View = (root as? ViewGroup)?.getChildAt(0) ?: root
+    // Pick the child the library adds; if none, fall back to the content itself
+    val padTarget: View = when {
+      contentRoot == null -> return
+      contentRoot.childCount > 0 -> contentRoot.getChildAt(0)
+      else -> contentRoot
+    }
 
     ViewCompat.setOnApplyWindowInsetsListener(padTarget) { v, insets ->
       val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
       v.updatePadding(top = bars.top, bottom = bars.bottom)
-      // Don't forcibly consume; let child views participate if they want.
-      insets
+      insets // don't consume, let children participate
     }
   }
 }
