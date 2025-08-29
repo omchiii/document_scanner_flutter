@@ -1,24 +1,25 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
   package="com.document.scanner.flutter.document_scanner_flutter">
-    <uses-feature
-        android:name="android.hardware.camera"
-        android:required="true" />
 
+    <uses-feature android:name="android.hardware.camera" android:required="true" />
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
-        android:maxSdkVersion="32" />
-    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
 
     <application
-        android:requestLegacyExternalStorage="true"
         android:allowBackup="true"
         android:largeHeap="true"
         android:hardwareAccelerated="true">
+
+        <!-- Your original ScanActivity (from scanlibrary) can stay declared if needed -->
         <activity
             android:name="com.document.scanner.flutter.document_scanner_flutter.scanlibrary.ScanActivity"
             android:configChanges="orientation|screenSize"
             android:exported="true"
-            android:label="@string/app_name" >
-        </activity>
+            android:label="@string/app_name" />
+
+        <!-- New edge-to-edge wrapper (launched by the plugin) -->
+        <activity
+            android:name="com.document.scanner.flutter.document_scanner_flutter.EdgeToEdgeScanActivity"
+            android:exported="false"
+            android:configChanges="orientation|screenSize" />
     </application>
 </manifest>
